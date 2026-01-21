@@ -14,7 +14,7 @@ setInterval(() => {
 }, 1000)
 
 // 接收子组件的 timing 更新
-function handleTimingUpdate(value: number) {
+function handleChildChange(value: number) {
   childTiming.value = value
 }
 </script>
@@ -54,7 +54,7 @@ function handleTimingUpdate(value: number) {
         <HelloWorld
           :timing="timing"
           @vue:mounted="isMounted = true"
-          @timing-update="handleTimingUpdate"
+          @change="handleChildChange"
         />
         <template #fallback>
           <div class="placeholder">
