@@ -5,12 +5,18 @@ import HelloWorld from './HelloWorld.vue'
 
 const isMounted = ref(false)
 const timing = ref(0)
+const childTiming = ref(0)
 const scrollContainer = ref<HTMLElement | null>(null)
 
 // 模拟数据更新
 setInterval(() => {
   timing.value++
 }, 1000)
+
+// 接收子组件的 timing 更新
+function handleTimingUpdate(value: number) {
+  childTiming.value = value
+}
 </script>
 
 <template>
@@ -23,7 +29,11 @@ setInterval(() => {
         </span>
         <span class="status-item">
           <span class="update-icon">⏳</span>
-          Timing: {{ timing }}
+          Parent Timing: {{ timing }}
+        </span>
+        <span class="status-item highlight">
+          <span class="update-icon">🔄</span>
+          Child Timing: {{ childTiming }}
         </span>
       </div>
       <p class="hint">
@@ -41,7 +51,11 @@ setInterval(() => {
       </div>
 
       <LazyRender :root="scrollContainer" root-margin="0px">
-        <HelloWorld :timing="timing" @vue:mounted="isMounted = true" />
+        <HelloWorld
+          :timing="timing"
+          @vue:mounted="isMounted = true"
+          @timing-update="handleTimingUpdate"
+        />
         <template #fallback>
           <div class="placeholder">
             <div class="placeholder-icon">
@@ -91,6 +105,11 @@ setInterval(() => {
   gap: 8px;
   font-size: 14px;
   font-weight: 500;
+}
+
+.status-item.highlight {
+  color: var(--vp-c-brand-1);
+  font-weight: 600;
 }
 
 .status-dot {
