@@ -1,6 +1,6 @@
 <script setup lang="ts">
 defineProps<{
-  updateCount: number
+  timing: number
 }>()
 </script>
 
@@ -17,7 +17,7 @@ defineProps<{
         This component is now mounted!
       </p>
       <p class="update-info">
-        Live updates: <strong>{{ updateCount }}</strong>
+        Live Timing: <strong>{{ timing }}</strong>
       </p>
       <p class="description">
         When you scroll this component out of viewport, updates will be frozen.

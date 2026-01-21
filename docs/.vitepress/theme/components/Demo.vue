@@ -4,12 +4,12 @@ import { LazyRender } from '../../../../src'
 import HelloWorld from './HelloWorld.vue'
 
 const isMounted = ref(false)
-const updateCount = ref(0)
+const timing = ref(0)
 const scrollContainer = ref<HTMLElement | null>(null)
 
 // 模拟数据更新
 setInterval(() => {
-  updateCount.value++
+  timing.value++
 }, 1000)
 </script>
 
@@ -22,8 +22,8 @@ setInterval(() => {
           {{ isMounted ? 'Mounted' : 'Not Mounted' }}
         </span>
         <span class="status-item">
-          <span class="update-icon">🔄</span>
-          Update Count: {{ updateCount }}
+          <span class="update-icon">⏳</span>
+          Timing: {{ timing }}
         </span>
       </div>
       <p class="hint">
@@ -41,7 +41,7 @@ setInterval(() => {
       </div>
 
       <LazyRender :root="scrollContainer" root-margin="0px">
-        <HelloWorld :update-count="updateCount" @vue:mounted="isMounted = true" />
+        <HelloWorld :timing="timing" @vue:mounted="isMounted = true" />
         <template #fallback>
           <div class="placeholder">
             <div class="placeholder-icon">
