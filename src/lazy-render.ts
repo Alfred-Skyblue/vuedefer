@@ -1,4 +1,4 @@
-import type { PropType, VNode } from 'vue'
+import type { ComponentInternalInstance, PropType, VNode } from 'vue'
 import { defineComponent, h, ref, watch } from 'vue'
 import { useIntersectionObserver } from './composables/useIntersectionObserver'
 
@@ -69,8 +69,8 @@ export const LazyRender = defineComponent<LazyRenderProps>({
 
     let currentVNode: VNode | null = null
     // eslint-disable-next-line ts/no-unsafe-function-type
-    const originalRenderCache = new Map<any, Function>()
-    const calledCache = new Map<any, boolean>()
+    const originalRenderCache = new WeakMap<ComponentInternalInstance, Function>()
+    const calledCache = new WeakMap<ComponentInternalInstance, boolean>()
 
     const updateFreeze = (
       component: any,
@@ -126,7 +126,7 @@ export const LazyRender = defineComponent<LazyRenderProps>({
       isVisible,
       (visible) => {
         if (currentVNode) {
-          const component: any = currentVNode.component!
+          const component = currentVNode.component
           containerRef.value = currentVNode.el as HTMLElement
           if (component) {
             const depth = props.deep === true ? Infinity : (props.deep || 0)
