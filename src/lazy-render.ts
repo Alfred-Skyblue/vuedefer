@@ -8,6 +8,11 @@ export interface LazyRenderProps extends IntersectionObserverInit {
    * @default 'div'
    */
   tag?: string
+  /**
+   * Freeze update depth
+   * @default false
+   */
+  deep?: boolean | number
 }
 
 /**
@@ -45,6 +50,10 @@ export const LazyRender = defineComponent<LazyRenderProps>({
       type: [Number, Array] as PropType<number | number[]>,
       default: undefined,
     },
+    deep: {
+      type: [Boolean, Number] as PropType<boolean | number>,
+      default: false,
+    },
   },
   emits: ['change'],
   setup(props, { slots, emit }) {
@@ -58,10 +67,60 @@ export const LazyRender = defineComponent<LazyRenderProps>({
       },
     )
 
-    // eslint-disable-next-line ts/no-unsafe-function-type
-    let render: Function | null
     let currentVNode: VNode | null = null
-    let called = false
+    // eslint-disable-next-line ts/no-unsafe-function-type
+    const originalRenderCache = new Map<any, Function>()
+    const calledCache = new Map<any, boolean>()
+
+    const updateFreeze = (
+      component: any,
+      freeze: boolean,
+      depth: number = Infinity,
+    ) => {
+      if (!component)
+        return
+
+      if (freeze) {
+        if (!originalRenderCache.has(component)) {
+          originalRenderCache.set(component, component.render)
+
+          component.render = () => {
+            calledCache.set(component, true)
+            return component.subTree
+          }
+        }
+      }
+      else {
+        const originRender = originalRenderCache.get(component)
+        if (originRender) {
+          component.render = originRender
+          originalRenderCache.delete(component)
+
+          if (calledCache.get(component)) {
+            calledCache.delete(component)
+            component.update()
+          }
+        }
+      }
+
+      if (depth > 0) {
+        const subTree = component.subTree
+
+        const walk = (node: any) => {
+          if (!node)
+            return
+
+          if (node.component) {
+            updateFreeze(node.component, freeze, depth - 1)
+          }
+          else if (Array.isArray(node.children)) {
+            node.children.forEach(walk)
+          }
+        }
+
+        walk(subTree)
+      }
+    }
 
     const stopWatch = watch(
       isVisible,
@@ -70,25 +129,12 @@ export const LazyRender = defineComponent<LazyRenderProps>({
           const component: any = currentVNode.component!
           containerRef.value = currentVNode.el as HTMLElement
           if (component) {
-            if (!visible) {
-              const _render = component.render
-              component.render = () => {
-                called = true
-                return component.subTree
-              }
-              render = _render
-            }
-            else {
-              component.render = render || component.render
-              if (called) {
-                component.update()
-              }
-            }
+            const depth = props.deep === true ? Infinity : (props.deep || 0)
+            updateFreeze(component, !visible, depth)
           }
           else {
             cleanup()
           }
-
           emit('change', visible)
         }
       },
