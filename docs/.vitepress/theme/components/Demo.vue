@@ -8,12 +8,12 @@ const timing = ref(0)
 const childTiming = ref(0)
 const scrollContainer = ref<HTMLElement | null>(null)
 
-// 模拟数据更新
+// Simulate data updates
 setInterval(() => {
   timing.value++
 }, 1000)
 
-// 接收子组件的 timing 更新
+// Handle timing updates from child component
 function handleChildChange(value: number) {
   childTiming.value = value
 }
