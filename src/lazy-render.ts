@@ -13,6 +13,11 @@ export interface LazyRenderProps extends IntersectionObserverInit {
    * @default 'div'
    */
   tag?: string
+  /**
+   * Whether to stop observing after the component becomes visible for the first time.
+   * @default false
+   */
+  once?: boolean
 }
 
 /**
@@ -50,6 +55,10 @@ export const LazyRender = defineComponent<LazyRenderProps>({
       type: [Number, Array] as PropType<number | number[]>,
       default: undefined,
     },
+    once: {
+      type: Boolean,
+      default: false,
+    },
   },
   emits: ['change'],
   setup(props, { slots, emit }) {
@@ -60,6 +69,7 @@ export const LazyRender = defineComponent<LazyRenderProps>({
         root: props.root,
         rootMargin: props.rootMargin,
         threshold: props.threshold,
+        once: props.once,
       },
     )
 

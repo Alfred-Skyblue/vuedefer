@@ -13,19 +13,25 @@ import {
  */
 export function useIntersectionObserver(
   target: Ref<HTMLElement | null>,
-  options?: IntersectionObserverInit,
+  options: IntersectionObserverInit & { once?: boolean },
 ) {
+  const { once, ...rest } = options
   const isVisible = ref(false)
 
   const observer = new IntersectionObserver(
     ([entry]) => {
+      if (once && isVisible.value)
+        return
       isVisible.value = entry.isIntersecting
+      if (once && entry.isIntersecting) {
+        stop()
+      }
     },
-    options,
+    rest,
   )
 
-  watch(target, (el, _, onCleanup) => {
-    if (!el)
+  const _stop = watch(target, (el, _, onCleanup) => {
+    if (!el || (once && isVisible.value))
       return
     observer.observe(el)
     onCleanup(() =>
@@ -35,6 +41,7 @@ export function useIntersectionObserver(
 
   function stop() {
     observer.disconnect()
+    _stop?.()
   }
 
   onUnmounted(stop)
