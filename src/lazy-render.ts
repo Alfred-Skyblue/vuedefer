@@ -10,6 +10,11 @@ export interface LazyRenderProps extends IntersectionObserverInit {
   tag?: string
 }
 
+// Custom type guard: Check if it is an HTMLElement
+const isHTMLElement = (value: any): value is HTMLElement => {
+  return value instanceof HTMLElement
+}
+
 /**
  * LazyRender - Lazy rendering component
  *
@@ -62,11 +67,6 @@ export const LazyRender = defineComponent<LazyRenderProps>({
     let render: Function | null
     let currentVNode: VNode | null = null
     let called = false
-
-    // Custom type guard: Check if it is an HTMLElement
-    const isHTMLElement = (value: any): value is HTMLElement => {
-      return value !== null && value !== undefined && value instanceof HTMLElement
-    }
 
     const stopWatch = watch(
       isVisible,

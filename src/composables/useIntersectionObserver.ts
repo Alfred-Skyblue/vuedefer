@@ -5,6 +5,11 @@ import {
   watch,
 } from 'vue'
 
+// Custom type guard function to explicitly check the element type
+function isElement(value: any): value is Element {
+  return value instanceof Element
+}
+
 /**
  * useIntersectionObserver - Observes element visibility in viewport
  * @param target - Target element ref to observe
@@ -23,11 +28,6 @@ export function useIntersectionObserver(
     },
     options,
   )
-
-  // Custom type guard function to explicitly check the element type
-  function isElement(value: any): value is Element {
-    return value !== null && value !== undefined && value instanceof Element
-  }
 
   watch(target, (el, _, onCleanup) => {
     if (!isElement(el)) return
