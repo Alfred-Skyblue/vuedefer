@@ -63,13 +63,17 @@ export const LazyRender = defineComponent<LazyRenderProps>({
     let currentVNode: VNode | null = null
     let called = false
 
+    // Custom type guard: Check if it is an HTMLElement
+    const isHTMLElement = (value: any): value is HTMLElement => {
+      return value !== null && value !== undefined && value instanceof HTMLElement
+    }
+
     const stopWatch = watch(
       isVisible,
       (visible) => {
         if (currentVNode) {
           const component: any = currentVNode.component!
-          // 确保 el 是有效的 Element 类型
-          if (currentVNode.el instanceof Element) {
+          if (isHTMLElement(currentVNode.el)) {
             containerRef.value = currentVNode.el as HTMLElement
           }
           if (component) {

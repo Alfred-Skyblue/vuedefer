@@ -1,4 +1,3 @@
-// src/composables/useIntersectionObserver.ts
 import type { Ref } from 'vue'
 import {
   onUnmounted,
@@ -25,10 +24,14 @@ export function useIntersectionObserver(
     options,
   )
 
+  // Custom type guard function to explicitly check the element type
+  function isElement(value: any): value is Element {
+    return value !== null && value !== undefined && value instanceof Element
+  }
+
   watch(target, (el, _, onCleanup) => {
-    // 确保 el 是有效的 Element 类型
-    if (!el || !(el instanceof Element))
-      return
+    if (!isElement(el)) return
+    
     observer.observe(el)
     onCleanup(() =>
       observer.unobserve(el),
