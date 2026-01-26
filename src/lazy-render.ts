@@ -68,7 +68,10 @@ export const LazyRender = defineComponent<LazyRenderProps>({
       (visible) => {
         if (currentVNode) {
           const component: any = currentVNode.component!
-          containerRef.value = currentVNode.el as HTMLElement
+          // 确保 el 是有效的 Element 类型
+          if (currentVNode.el instanceof Element) {
+            containerRef.value = currentVNode.el as HTMLElement
+          }
           if (component) {
             if (!visible) {
               const _render = component.render

@@ -1,3 +1,4 @@
+// src/composables/useIntersectionObserver.ts
 import type { Ref } from 'vue'
 import {
   onUnmounted,
@@ -25,7 +26,8 @@ export function useIntersectionObserver(
   )
 
   watch(target, (el, _, onCleanup) => {
-    if (!el)
+    // 确保 el 是有效的 Element 类型
+    if (!el || !(el instanceof Element))
       return
     observer.observe(el)
     onCleanup(() =>
