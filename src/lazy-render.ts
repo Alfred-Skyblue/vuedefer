@@ -1,6 +1,7 @@
 import type { PropType, VNode } from 'vue'
 import { defineComponent, h, ref, watch } from 'vue'
 import { useIntersectionObserver } from './composables/useIntersectionObserver'
+import { isElement } from './utils/utils'
 
 export interface LazyRenderProps extends IntersectionObserverInit {
   /**
@@ -8,11 +9,6 @@ export interface LazyRenderProps extends IntersectionObserverInit {
    * @default 'div'
    */
   tag?: string
-}
-
-// Custom type guard: Check if it is an HTMLElement
-const isHTMLElement = (value: any): value is HTMLElement => {
-  return value instanceof HTMLElement
 }
 
 /**
@@ -73,7 +69,7 @@ export const LazyRender = defineComponent<LazyRenderProps>({
       (visible) => {
         if (currentVNode) {
           const component: any = currentVNode.component!
-          if (isHTMLElement(currentVNode.el)) {
+          if (isElement(currentVNode.el)) {
             containerRef.value = currentVNode.el as HTMLElement
           }
           if (component) {

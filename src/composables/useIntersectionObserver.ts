@@ -4,11 +4,7 @@ import {
   ref,
   watch,
 } from 'vue'
-
-// Custom type guard function to explicitly check the element type
-function isElement(value: any): value is Element {
-  return value instanceof Element
-}
+import { isElement } from '../utils/utils'
 
 /**
  * useIntersectionObserver - Observes element visibility in viewport
