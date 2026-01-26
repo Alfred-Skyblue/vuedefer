@@ -4,6 +4,7 @@ import {
   ref,
   watch,
 } from 'vue'
+import { isElement } from '../utils/utils'
 
 /**
  * useIntersectionObserver - Observes element visibility in viewport
@@ -25,8 +26,8 @@ export function useIntersectionObserver(
   )
 
   watch(target, (el, _, onCleanup) => {
-    if (!el)
-      return
+    if (!isElement(el)) return
+    
     observer.observe(el)
     onCleanup(() =>
       observer.unobserve(el),
