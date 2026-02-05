@@ -1,5 +1,7 @@
 node_modules
+coverage
 dist
+__screenshots__
 *.log
 .DS_Store
 .idea
