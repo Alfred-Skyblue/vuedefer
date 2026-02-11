@@ -25,7 +25,7 @@ export function useIntersectionObserver(
   )
 
   watch(target, (el, _, onCleanup) => {
-    if (!el)
+    if (!(el instanceof HTMLElement))
       return
     observer.observe(el)
     onCleanup(() =>
